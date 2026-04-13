@@ -88,9 +88,8 @@ class BoardCell(ft.DragTarget):
         self.update()
 
     def drag_leave(self, e):
-        self.target_container.bgcolor = ft.Colors.GREY_300
         self.target_container.border = ft.border.all(1, ft.Colors.BLACK54)
-        self.update()
+        self.refresh_color()
 
     def drag_accept(self, e):
         src_object = e.page.get_control(e.src_id)
