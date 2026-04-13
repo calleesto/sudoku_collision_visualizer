@@ -1,4 +1,5 @@
 import random, json
+from sudoku import Sudoku
 class Game:
     def __init__(self):
         self.grid = [[0 for _ in range(9)] for _ in range(9)]
@@ -29,14 +30,21 @@ class Game:
                 if self.block_map[row][column] == block_num:
                     self.bin_highlight_map[row][column] = 1
 
+    def load_puzzle(self, difficulty=0.5):
+        """
+        difficulty ranges from 0.1 (almost solved) to 0.9 (very hard)
+        """
+        generated_puzzle = Sudoku(3).difficulty(difficulty) # 3 for 3x3 block sudoku
 
-    def load_puzzle(self):
-        with open('puzzles.json', 'r') as f:
-            simple_puzzles = json.load(f)
+        for row in range(9):
+            for column in range(9):
+                cell_value = generated_puzzle.board[row][column]
 
-        puzzle = random.choice(simple_puzzles)
-        for i in range(81):
-            self.grid[i // 9][i % 9] = puzzle[i]
+                # library fills list with None values.. converting to 0s
+                if cell_value is None:
+                    self.grid[row][column] = 0
+                else:
+                    self.grid[row][column] = cell_value
 
         # rules
         # after num input change all the places in the created array to 1 in these cases:
