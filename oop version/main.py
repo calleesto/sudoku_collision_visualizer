@@ -7,15 +7,15 @@ class NumberDraggable(ft.Draggable):
         self.number = number
         self.game = game
         self.on_change = on_change_callback
+        pass
 
-        draggable_container = ft.Container(
+        self.draggable_container = ft.Container(
             width=50,
             height=50,
             bgcolor=ft.Colors.BLUE_GREY_800,
             border_radius=5,
             alignment=ft.alignment.center,
             content=ft.Text(str(self.number), size=24, weight=ft.FontWeight.BOLD, color=ft.Colors.WHITE),
-            # THE MAGIC TRIGGER: When clicked, run our new method
             on_click=self.highlight_board
         )
 
@@ -30,14 +30,23 @@ class NumberDraggable(ft.Draggable):
 
         super().__init__(
             group="sudoku",
-            content=draggable_container,
+            content=self.draggable_container,
             content_feedback=feedback_container
         )
 
+    def refresh_color(self):
+        if hasattr(self.game, 'active_number') and self.game.active_number == self.number:
+            self.draggable_container.bgcolor = ft.Colors.BLUE_500
+        else:
+            self.draggable_container.bgcolor = ft.Colors.BLUE_GREY_800
+
+        self.update()
+
     def highlight_board(self, e):
         self.game.clear_highlights()
-
         self.game.fill_binary_highlight_array(self.number)
+
+        self.game.active_number = self.number
 
         self.on_change()
 
@@ -138,10 +147,14 @@ def main(page: ft.Page):
     game.load_puzzle()
 
     all_ui_cells = []
+    all_bank_buttons = []
 
     def update_entire_board():
         for cell in all_ui_cells:
             cell.refresh_color()
+
+        for button in all_bank_buttons:
+            button.refresh_color()
 
     # 9x9 sudoku board
     board_layout = ft.Column(spacing=2)
@@ -158,7 +171,9 @@ def main(page: ft.Page):
     # 1x9 number bank at the bottom
     bank_layout = ft.Row(spacing=10, alignment=ft.MainAxisAlignment.CENTER)
     for i in range(1, 10):
-        bank_layout.controls.append(NumberDraggable(i, game, update_entire_board))
+        new_button = NumberDraggable(i, game, update_entire_board)
+        bank_layout.controls.append(new_button)
+        all_bank_buttons.append(new_button)
 
     page.add(
         board_layout,
