@@ -43,18 +43,32 @@ class NumberDraggable(ft.Draggable):
 
 
 class BoardCell(ft.DragTarget):
-    def __init__(self, row, column, board):
+    def __init__(self, row, column, board, on_change_callback):
         self.row = row
         self.column = column
         self.board = board
+        self.on_change = on_change_callback
 
         self.text_element = ft.Text("", size=24, weight=ft.FontWeight.BOLD, color=ft.Colors.BLACK)
+
+        top_width = 3 if row % 3 == 0 else 1
+        left_width = 3 if column % 3 == 0 else 1
+
+        bottom_width = 3 if row == 8 else 0
+        right_width = 3 if column == 8 else 0
+
+        self.default_border = ft.border.only(
+            top=ft.border.BorderSide(top_width, ft.Colors.BLACK),
+            left=ft.border.BorderSide(left_width, ft.Colors.BLACK),
+            bottom=ft.border.BorderSide(bottom_width, ft.Colors.BLACK),
+            right=ft.border.BorderSide(right_width, ft.Colors.BLACK),
+        )
 
         self.target_container = ft.Container(
             width=50,
             height=50,
             bgcolor=ft.Colors.GREY_300,
-            border=ft.border.all(1, ft.Colors.BLACK54),
+            border=self.default_border,  # Apply the smart border here
             alignment=ft.alignment.center,
             content=self.text_element
         )
@@ -92,6 +106,7 @@ class BoardCell(ft.DragTarget):
             self.target_container.border = ft.border.all(1, ft.Colors.BLACK54)
             self.update()
 
+        self.on_change()
 
 
     def load_cell(self):
@@ -106,7 +121,7 @@ class BoardCell(ft.DragTarget):
         is_highlighted = self.board.bin_highlight_map[self.row][self.column]
 
         if is_highlighted == 1:
-            self.target_container.bgcolor = ft.Colors.RED_200  # Or YELLOW_200
+            self.target_container.bgcolor = ft.Colors.RED_200
         else:
             self.target_container.bgcolor = ft.Colors.GREY_300
 
@@ -134,7 +149,7 @@ def main(page: ft.Page):
     for row in range(9):
         row_items = []
         for col in range(9):
-            new_cell = BoardCell(row, col, game)
+            new_cell = BoardCell(row, col, game, update_entire_board)
             row_items.append(new_cell)
             all_ui_cells.append(new_cell)
         board_layout.controls.append(
