@@ -10,6 +10,18 @@ While playing Sudoku one day, I noticed that most apps just let you play — the
 
 ---
 
+## Preview
+
+Click a number to instantly see every cell it blocks across the board:
+
+![Collision highlighting in action](assets/board_highlight.png)
+
+The auto-cycle mode loops through all nine numbers, highlighting each one's collision zone in sequence:
+
+![Auto-cycle mode with the help button active](assets/auto_cycle.png)
+
+---
+
 ## Features
 
 - **Drag-and-drop gameplay** — drag numbers from the number bank onto the board
@@ -43,9 +55,12 @@ A separate 9×9 array is filled once at startup, assigning each cell a block num
 
 ```
 .
-├── main.py       # UI layer — Flet components, drag/drop, number bank, help button
-├── logic.py      # Game logic — grid state, highlight map, move validation, puzzle loading
-└── config.json   # User-facing settings — difficulty and highlight interval
+├── main.py           # UI layer — Flet components, drag/drop, number bank, help button
+├── logic.py          # Game logic — grid state, highlight map, move validation, puzzle loading
+├── config.json       # User-facing settings — difficulty and highlight interval
+└── assets/
+    ├── board_highlight.png   # Screenshot: collision zones highlighted in red
+    └── auto_cycle.png        # Screenshot: auto-cycle mode active
 ```
 
 ---
