@@ -6,75 +6,21 @@
 #     2. expanding the puzzles (proposition: easy medium and hard levels or some random sudoku level generator)
 
 
-import random, os
+import random, os, json
 
 # === DECLARE ARRAYS ===
 board = [[0 for _ in range(9)] for _ in range(9)]
 bin_highlight = [[0 for _ in range(9)] for _ in range(9)]
 block_arr = [[0 for _ in range(9)] for _ in range(9)]
 
-easy_puzzles = [
-    # Puzzle 1
-    [5, 3, 0, 0, 7, 0, 0, 0, 0,
-     6, 0, 0, 1, 9, 5, 0, 0, 0,
-     0, 9, 8, 0, 0, 0, 0, 6, 0,
-     8, 0, 0, 0, 6, 0, 0, 0, 3,
-     4, 0, 0, 8, 0, 3, 0, 0, 1,
-     7, 0, 0, 0, 2, 0, 0, 0, 6,
-     0, 6, 0, 0, 0, 0, 2, 8, 0,
-     0, 0, 0, 4, 1, 9, 0, 0, 5,
-     0, 0, 0, 0, 8, 0, 0, 7, 9],
 
-    # Puzzle 2
-    [0, 0, 3, 0, 2, 0, 6, 0, 0,
-     9, 0, 0, 3, 0, 0, 0, 0, 1,
-     0, 0, 1, 8, 0, 0, 4, 0, 0,
-     0, 0, 8, 1, 0, 2, 9, 0, 0,
-     7, 0, 0, 0, 0, 0, 0, 0, 8,
-     0, 0, 6, 7, 0, 8, 2, 0, 0,
-     0, 0, 2, 0, 0, 1, 5, 0, 0,
-     8, 0, 0, 0, 0, 4, 0, 0, 7,
-     0, 0, 5, 0, 9, 0, 3, 0, 0],
-
-    # Puzzle 3
-    [0, 2, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 3, 0, 0, 5, 0,
-     0, 1, 0, 0, 0, 0, 0, 0, 0,
-     2, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 1, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 3,
-     0, 3, 0, 0, 9, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 0, 0, 0],
-
-    # Puzzle 4
-    [1, 0, 0, 0, 0, 0, 0, 0, 2,
-     0, 0, 0, 3, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 7, 0, 0,
-     0, 0, 2, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 5, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 0, 3, 0, 0,
-     0, 0, 4, 0, 0, 0, 0, 0, 0,
-     0, 0, 0, 0, 0, 8, 0, 0, 0,
-     5, 0, 0, 0, 0, 0, 0, 0, 9],
-
-    # Puzzle 5
-    [0, 0, 5, 0, 0, 8, 0, 0, 0,
-     0, 1, 0, 0, 2, 0, 0, 0, 5,
-     0, 0, 0, 0, 0, 0, 0, 7, 0,
-     0, 0, 0, 0, 0, 0, 2, 0, 0,
-     0, 0, 0, 1, 0, 0, 0, 0, 0,
-     0, 0, 6, 0, 0, 0, 0, 0, 0,
-     0, 8, 0, 0, 0, 0, 0, 9, 0,
-     3, 0, 0, 0, 7, 0, 0, 5, 0,
-     0, 0, 0, 9, 0, 0, 8, 0, 0],
-]
+with open('puzzles.json', 'r') as f:
+    easy_puzzles = json.load(f)
 
 
 
 
-
-# === HELPING FUNCTIONS ===
+# === HELPER FUNCTIONS ===
 
 # this is for cross-compatibility across platforms
 def clear_terminal():
@@ -157,9 +103,6 @@ def fill_block_arr():
             for c in range(3):
                 block_arr[block_row_start + r][block_col_start + c] = block_num
 
-def analyze_board(num):
-    fill_binary_highlight_array(num)
-
 
 
 
@@ -221,7 +164,7 @@ def main():
         print_board()
         num = get_num()
         bin_highlight[:] = [[0 for _ in range(9)] for _ in range(9)] # [:] keeps the list and clears it, doesn't create a new one
-        analyze_board(num)
+        fill_binary_highlight_array(num)
         clear_terminal()
         print_board()
         solved = check_puzzle_solved()
