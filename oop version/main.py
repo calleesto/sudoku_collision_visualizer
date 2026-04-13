@@ -1,5 +1,6 @@
 import flet as ft
 from logic import Game
+import asyncio
 
 
 class NumberDraggable(ft.Draggable):
@@ -152,7 +153,6 @@ def main(page: ft.Page):
     def update_entire_board():
         for cell in all_ui_cells:
             cell.refresh_color()
-
         for button in all_bank_buttons:
             button.refresh_color()
 
@@ -165,8 +165,8 @@ def main(page: ft.Page):
             row_items.append(new_cell)
             all_ui_cells.append(new_cell)
         board_layout.controls.append(
-           ft.Row(controls=row_items, spacing=2, alignment=ft.MainAxisAlignment.CENTER)
-          )
+            ft.Row(controls=row_items, spacing=2, alignment=ft.MainAxisAlignment.CENTER)
+        )
 
     # 1x9 number bank at the bottom
     bank_layout = ft.Row(spacing=10, alignment=ft.MainAxisAlignment.CENTER)
@@ -174,6 +174,42 @@ def main(page: ft.Page):
         new_button = NumberDraggable(i, game, update_entire_board)
         bank_layout.controls.append(new_button)
         all_bank_buttons.append(new_button)
+
+    # HELP BUTTON LOGIC
+    ITERATION_INTERVAL_SECONDS = 0.5
+    help_active = {"value": False}
+
+    async def cycle_highlight_loop():
+        index = 0
+        while help_active["value"]:
+            number = index + 1
+            game.clear_highlights()
+            game.fill_binary_highlight_array(number)
+            game.active_number = number
+            update_entire_board()
+            index = (index + 1) % 9
+            await asyncio.sleep(ITERATION_INTERVAL_SECONDS)
+
+    async def toggle_help(e):
+        if help_active["value"]:
+            help_active["value"] = False
+            help_icon_btn.icon_color = ft.Colors.WHITE
+            help_icon_btn.update()
+        else:
+            help_active["value"] = True
+            help_icon_btn.icon_color = ft.Colors.YELLOW_400
+            help_icon_btn.update()
+            asyncio.create_task(cycle_highlight_loop())
+
+    help_icon_btn = ft.IconButton(
+        icon=ft.Icons.HELP_OUTLINE,
+        icon_color=ft.Colors.WHITE,
+        icon_size=36,
+        tooltip="Auto-highlight each number",
+        on_click=toggle_help
+    )
+
+    bank_layout.controls.append(help_icon_btn)
 
     page.add(
         board_layout,
