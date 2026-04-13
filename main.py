@@ -1,6 +1,10 @@
 import flet as ft
 from logic import Game
 import asyncio
+import json
+
+with open("config.json") as f:
+    config = json.load(f)
 
 
 class NumberDraggable(ft.Draggable):
@@ -176,7 +180,7 @@ def main(page: ft.Page):
         all_bank_buttons.append(new_button)
 
     # HELP BUTTON LOGIC
-    ITERATION_INTERVAL_SECONDS = 0.5
+    iteration_interval_seconds = config["highlight_interval_seconds"]
     help_active = {"value": False}
 
     async def cycle_highlight_loop():
@@ -188,7 +192,7 @@ def main(page: ft.Page):
             game.active_number = number
             update_entire_board()
             index = (index + 1) % 9
-            await asyncio.sleep(ITERATION_INTERVAL_SECONDS)
+            await asyncio.sleep(iteration_interval_seconds)
 
     async def toggle_help(e):
         if help_active["value"]:

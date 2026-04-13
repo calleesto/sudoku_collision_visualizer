@@ -1,5 +1,9 @@
 import random, json
 from sudoku import Sudoku
+import json
+with open("config.json") as f:
+    config = json.load(f)
+
 class Game:
     def __init__(self):
         self.grid = [[0 for _ in range(9)] for _ in range(9)]
@@ -30,10 +34,11 @@ class Game:
                 if self.block_map[row][column] == block_num:
                     self.bin_highlight_map[row][column] = 1
 
-    def load_puzzle(self, difficulty=0.5):
+    def load_puzzle(self):
         """
         difficulty ranges from 0.1 (almost solved) to 0.9 (very hard)
         """
+        difficulty = config["difficulty"]
         generated_puzzle = Sudoku(3).difficulty(difficulty) # 3 for 3x3 block sudoku
 
         for row in range(9):
