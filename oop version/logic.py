@@ -1,15 +1,15 @@
 import random, json
-class Board:
+class Game:
     def __init__(self):
-        self.board = [[0 for _ in range(9)] for _ in range(9)]
+        self.grid = [[0 for _ in range(9)] for _ in range(9)]
         self.bin_highlight_map = [[0 for _ in range(9)] for _ in range(9)]
         self.block_map = [[0 for _ in range(9)] for _ in range(9)]
 
-    def get_cell(self, row, col):
-        return self.board[row][col]
+    def get_cell(self, row, column):
+        return self.grid[row][column]
 
-    def clear_highlights(self):
-        self.bin_highlight_map[:] = [[0 for _ in range(9)] for _ in range(9)]  # [:] keeps the list and clears it, doesn't create a new one
+    def set_cell(self, row, column, value):
+        self.grid[row][column] = value
 
     def _set_horizontal_axis(self, highlight_row):
         for column in range(9):
@@ -36,7 +36,7 @@ class Board:
 
         puzzle = random.choice(simple_puzzles)
         for i in range(81):
-            self.board[i // 9][i % 9] = puzzle[i]
+            self.grid[i // 9][i % 9] = puzzle[i]
 
         # rules
         # after num input change all the places in the created array to 1 in these cases:
@@ -48,7 +48,7 @@ class Board:
     def fill_binary_highlight_array(self, num):
         for row in range(9):
             for column in range(9):
-                if self.board[row][column] == num:
+                if self.grid[row][column] == num:
                     self._set_horizontal_axis(row)  # set the entire axis to 1 in the bin highlight array
                     self._set_vertical_axis(column)  # set the entire axis to 1 in the bin highlight array
                     self._set_entire_block(
@@ -67,11 +67,11 @@ class Board:
         for row in range(9):
             for column in range(9):
                 if self.bin_highlight_map[row][column] == 1:
-                    print(f"\033[1m\033[31m{self.board[row][column]}\033[0m", end=" ")
+                    print(f"\033[1m\033[31m{self.grid[row][column]}\033[0m", end=" ")
                 elif (row // 3 + column // 3) % 2 == 0:
-                    print(f"\033[90m{self.board[row][column]}\033[0m", end=" ")
+                    print(f"\033[90m{self.grid[row][column]}\033[0m", end=" ")
                 else:
-                    print(f"{self.board[row][column]}", end=" ")
+                    print(f"{self.grid[row][column]}", end=" ")
             print()
 
     def print_analysis(self):
@@ -99,10 +99,23 @@ class Board:
 
         print()
 
+    def clear_highlights(self):
+        self.bin_highlight_map[:] = [[0 for _ in range(9)] for _ in range(9)]  # [:] keeps the list and clears it, doesn't create a new one
+
     def is_solved(self):
         for row in range(9):
             for column in range(9):
-                if self.board[row][column] == 0:
+                if self.grid[row][column] == 0:
                     return False
 
         return True
+
+    def check_move(self, row, column):
+        # later implement the checking if cell is empty into the highlighting algorithm
+        if self.grid[row][column] == 0 and self.bin_highlight_map[row][column] == 0:
+            return True
+        else:
+            return False
+
+
+
