@@ -9,12 +9,16 @@ class Game:
         self.grid = [[0 for _ in range(9)] for _ in range(9)]
         self.bin_highlight_map = [[0 for _ in range(9)] for _ in range(9)]
         self.block_map = [[0 for _ in range(9)] for _ in range(9)]
+        self.og_cell_map = [[0 for _ in range(9)] for _ in range(9)]
 
     def get_cell(self, row, column):
         return self.grid[row][column]
 
     def set_cell(self, row, column, value):
         self.grid[row][column] = value
+
+    def get_og_cell(self, row, column):
+        return self.og_cell_map[row][column]
 
     def _set_horizontal_axis(self, highlight_row):
         for column in range(9):
@@ -48,8 +52,10 @@ class Game:
                 # library fills list with None values.. converting to 0s
                 if cell_value is None:
                     self.grid[row][column] = 0
+                    self.og_cell_map[row][column] = 0
                 else:
                     self.grid[row][column] = cell_value
+                    self.og_cell_map[row][column] = 1
 
         # rules
         # after num input change all the places in the created array to 1 in these cases:
@@ -59,13 +65,14 @@ class Game:
         # 4. their entire block
 
     def fill_binary_highlight_array(self, num):
+        if num == 0: return
         for row in range(9):
             for column in range(9):
                 if self.grid[row][column] == num:
                     self._set_horizontal_axis(row)  # set the entire axis to 1 in the bin highlight array
                     self._set_vertical_axis(column)  # set the entire axis to 1 in the bin highlight array
                     self._set_entire_block(
-                        self._get_block_num(row, column))  # set the entire block in to 1 in the bin highlight array
+                            self._get_block_num(row, column))  # set the entire block in to 1 in the bin highlight array
 
     def fill_block_arr(self):
         for block in range(9):
@@ -131,7 +138,6 @@ class Game:
             return False
 
     def clear_cell(self, row, column):
-        self.grid[row][column] = 0
-
-
+        if self.og_cell_map[row][column] == 0:
+            self.grid[row][column] = 0
 

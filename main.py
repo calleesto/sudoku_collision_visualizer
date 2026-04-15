@@ -109,6 +109,20 @@ class BoardCell(ft.DragTarget):
     def drag_accept(self, e):
         src_object = e.page.get_control(e.src_id)
         dropped_number = src_object.number
+
+        # eraser logic
+        if dropped_number == 0:
+            if self.board.get_og_cell(self.row, self.column) == 0:
+                self.board.clear_cell(self.row, self.column)
+                self.text_element.value = ""
+                self.board.clear_highlights()
+
+                self.target_container.bgcolor = ft.Colors.GREY_300
+                self.target_container.border = self.default_border
+                self.update()
+                self.on_change()
+            return
+
         self.board.clear_highlights()
         self.board.fill_binary_highlight_array(dropped_number)
 
@@ -116,7 +130,7 @@ class BoardCell(ft.DragTarget):
             self.text_element.value = str(dropped_number)
             self.board.set_cell(self.row, self.column, dropped_number)
 
-            #new highlight after move
+            # new highlight after move
             self.board.clear_highlights()
             self.board.fill_binary_highlight_array(dropped_number)
 
@@ -124,7 +138,7 @@ class BoardCell(ft.DragTarget):
             self.target_container.border = self.default_border
             self.update()
 
-        self.on_change()
+            self.on_change()
 
 
 
