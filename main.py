@@ -98,11 +98,12 @@ class BoardCell(ft.DragTarget):
 
     def drag_will_accept(self, e):
         self.target_container.bgcolor = ft.Colors.YELLOW_200
-        self.target_container.border = ft.border.all(3, ft.Colors.BLUE_ACCENT_400)
+        #wrong move cell border
+        #self.target_container.border = ft.border.all(3, ft.Colors.BLUE_ACCENT_400)
         self.update()
 
     def drag_leave(self, e):
-        self.target_container.border = ft.border.all(1, ft.Colors.BLACK54)
+        self.target_container.border = self.default_border
         self.refresh_color()
 
     def drag_accept(self, e):
@@ -116,7 +117,7 @@ class BoardCell(ft.DragTarget):
             self.board.set_cell(self.row, self.column, dropped_number)
 
             self.target_container.bgcolor = ft.Colors.GREY_300
-            self.target_container.border = ft.border.all(1, ft.Colors.BLACK54)
+            self.target_container.border = self.default_border
             self.update()
 
         self.on_change()
