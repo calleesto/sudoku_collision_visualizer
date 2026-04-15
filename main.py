@@ -12,7 +12,16 @@ class NumberDraggable(ft.Draggable):
         self.number = number
         self.game = game
         self.on_change = on_change_callback
-        pass
+
+        # Determine content and tooltip based on if it's the eraser (0) or a number
+        if self.number == 0:
+            display_content = ft.Icon(name=ft.Icons.HIGHLIGHT_OFF, color=ft.Colors.WHITE, size=24)
+            feedback_content = ft.Icon(name=ft.Icons.HIGHLIGHT_OFF, color=ft.Colors.WHITE, size=24)
+            tooltip_text = "Use the eraser on the green numbers"
+        else:
+            display_content = ft.Text(str(self.number), size=24, weight=ft.FontWeight.BOLD, color=ft.Colors.WHITE)
+            feedback_content = ft.Text(str(self.number), size=24, weight=ft.FontWeight.BOLD, color=ft.Colors.WHITE)
+            tooltip_text = None
 
         self.draggable_container = ft.Container(
             width=50,
@@ -20,7 +29,8 @@ class NumberDraggable(ft.Draggable):
             bgcolor=ft.Colors.BLUE_GREY_800,
             border_radius=5,
             alignment=ft.alignment.center,
-            content=ft.Text(str(self.number), size=24, weight=ft.FontWeight.BOLD, color=ft.Colors.WHITE),
+            content=display_content,
+            tooltip=tooltip_text,
             on_click=self.highlight_board
         )
 
@@ -30,7 +40,7 @@ class NumberDraggable(ft.Draggable):
             bgcolor=ft.Colors.with_opacity(0.8, ft.Colors.BLUE_GREY_800),
             border_radius=5,
             alignment=ft.alignment.center,
-            content=ft.Text(str(self.number), size=24, weight=ft.FontWeight.BOLD, color=ft.Colors.WHITE)
+            content=feedback_content
         )
 
         super().__init__(
@@ -82,7 +92,7 @@ class BoardCell(ft.DragTarget):
             width=50,
             height=50,
             bgcolor=ft.Colors.GREY_300,
-            border=self.default_border,  # Apply the smart border here
+            border=self.default_border,
             alignment=ft.alignment.center,
             content=self.text_element
         )
@@ -128,6 +138,7 @@ class BoardCell(ft.DragTarget):
 
         if self.board.check_move(self.row, self.column):
             self.text_element.value = str(dropped_number)
+            self.text_element.color = ft.Colors.GREEN
             self.board.set_cell(self.row, self.column, dropped_number)
 
             # new highlight after move
@@ -140,13 +151,17 @@ class BoardCell(ft.DragTarget):
 
             self.on_change()
 
-
-
     def load_cell(self):
         cell_value = self.board.get_cell(self.row, self.column)
 
         if cell_value != 0:
             self.text_element.value = str(cell_value)
+
+            if self.board.get_og_cell(self.row, self.column) == 1:
+                self.text_element.color = ft.Colors.BLACK
+            else:
+                self.text_element.color = ft.Colors.GREEN
+
         else:
             self.text_element.value = ""
 
@@ -192,9 +207,11 @@ def main(page: ft.Page):
             ft.Row(controls=row_items, spacing=2, alignment=ft.MainAxisAlignment.CENTER)
         )
 
-    # 1x9 number bank at the bottom
+    # 1x9 number bank at the bottom (plus the eraser at the end)
     bank_layout = ft.Row(spacing=11, alignment=ft.MainAxisAlignment.CENTER)
-    for i in range(0, 10):
+
+    bank_sequence = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
+    for i in bank_sequence:
         new_button = NumberDraggable(i, game, update_entire_board)
         bank_layout.controls.append(new_button)
         all_bank_buttons.append(new_button)
