@@ -130,5 +130,8 @@ class Game:
         else:
             return False
 
+    def clear_cell(self, row, column):
+        self.grid[row][column] = 0
+
 
 

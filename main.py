@@ -116,11 +116,16 @@ class BoardCell(ft.DragTarget):
             self.text_element.value = str(dropped_number)
             self.board.set_cell(self.row, self.column, dropped_number)
 
+            #new highlight after move
+            self.board.clear_highlights()
+            self.board.fill_binary_highlight_array(dropped_number)
+
             self.target_container.bgcolor = ft.Colors.GREY_300
             self.target_container.border = self.default_border
             self.update()
 
         self.on_change()
+
 
 
     def load_cell(self):
@@ -174,8 +179,8 @@ def main(page: ft.Page):
         )
 
     # 1x9 number bank at the bottom
-    bank_layout = ft.Row(spacing=10, alignment=ft.MainAxisAlignment.CENTER)
-    for i in range(1, 10):
+    bank_layout = ft.Row(spacing=11, alignment=ft.MainAxisAlignment.CENTER)
+    for i in range(0, 10):
         new_button = NumberDraggable(i, game, update_entire_board)
         bank_layout.controls.append(new_button)
         all_bank_buttons.append(new_button)
